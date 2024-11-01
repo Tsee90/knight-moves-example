@@ -1,33 +1,77 @@
-function knightMoves(start, end, depth = 0) {
-  if (end[0] < 0 || end[0] > 7 || end[1] < 0 || end[1] > 7) return -1;
-  if (start[0] < 0 || start[0] > 7 || start[1] < 0 || start[1] > 7) return -1;
+function knightMoves(start, end) {
+  if (!isValidPosition(end))
+    throw new Error(`[${end}] is an invalid end position.`);
+  if (!isValidPosition(start))
+    throw new Error(`[${start}] is an invalid start position.`);
+  if (isEqual(start, end)) return 0;
 
-  if (start[0] === end[0] && start[1] === end[1]) return depth;
+  let depth = 0;
+  let found = false;
+  const queue = [];
+  queue.push([start]);
+  while (queue.length > 0 && !found) {
+    const currentSet = queue.shift();
+    let nextSet = [];
+    currentSet.forEach((position) => {
+      const rightUp = [position[0] + 2, position[1] + 1];
+      const rightDown = [position[0] + 2, position[1] - 1];
+      const leftUp = [position[0] - 2, position[1] + 1];
+      const leftDown = [position[0] - 2, position[1] - 1];
+      const upRight = [position[0] + 1, position[1] + 2];
+      const upLeft = [position[0] - 1, position[1] + 2];
+      const downRight = [position[0] + 1, position[1] - 2];
+      const downLeft = [position[0] - 1, position[1] - 2];
 
-  const rightUp = knightMoves([start[0] + 2, start[1] + 1], end, depth + 1);
-  if (rightUp !== -1) return rightUp;
+      const newMoveSet = [
+        rightUp,
+        rightDown,
+        leftUp,
+        leftDown,
+        upRight,
+        upLeft,
+        downRight,
+        downLeft,
+      ];
 
-  const rightDown = knightMoves([start[(0 + 2, start[1] - 1)]], end, depth + 1);
-  if (rightDown !== -1) return rightDown;
+      const validMoveSet = newMoveSet.filter((position) =>
+        isValidPosition(position)
+      );
 
-  const leftUp = knightMoves([start[0] - 2, start[1] + 1], end, depth + 1);
-  if (leftUp !== -1) return leftUp;
+      if (checkMoveSet(validMoveSet, end)) {
+        found = true;
+      } else {
+        nextSet = nextSet.concat(validMoveSet);
+      }
+    });
+    if (nextSet.length > 0) queue.push(nextSet);
 
-  const leftDown = knightMoves([start[0] - 2, start[1] - 1], end, depth + 1);
-  if (leftDown !== -1) return leftDown;
+    depth += 1;
+  }
 
-  const upRight = knightMoves([start[0] + 1, start[1] + 2], end, depth + 1);
-  if (upRight !== -1) return upRight;
+  return depth;
+}
 
-  const upLeft = knightMoves([start[0] - 1, start[1] + 2], end, depth + 1);
-  if (upLeft !== -1) return upLeft;
+function checkMoveSet(set, end) {
+  let found = false;
+  set.forEach((move) => {
+    if (isEqual(move, end)) {
+      found = true;
+    }
+  });
+  return found;
+}
 
-  const downRight = knightMoves([start[0] + 1, start[1] - 2], end, depth + 1);
-  if (downRight !== -1) return downRight;
+function isEqual(position, end) {
+  if (position[0] === end[0] && position[1] === end[1]) return true;
+  return false;
+}
 
-  const downLeft = knightMoves([start[0] - 1, start[1] - 2], end, depth + 1);
-  if (downLeft !== -1) return downLeft;
+function isValidPosition(position) {
+  if (position[0] < 0 || position[0] > 7 || position[1] < 0 || position[1] > 7)
+    return false;
+  return true;
 }
 const start = [0, 0];
-const end = [4, 5];
+const end = [7, 7];
+
 console.log(knightMoves(start, end));
