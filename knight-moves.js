@@ -46,11 +46,12 @@ function isEqual(position, end) {
 }
 
 function isValidPosition(position) {
+  if (!Array.isArray(position) || position.length !== 2) return false;
   if (position[0] < 0 || position[0] > 7 || position[1] < 0 || position[1] > 7)
     return false;
   return true;
 }
-const start = '[0, 0]';
+const start = [0, 0];
 const end = [7, 7];
 
 console.log(knightMoves(start, end));
