@@ -1,4 +1,4 @@
-function knightMoves(start, end) {
+function getKnightMoves(start, end) {
   if (!isValidPosition(end))
     throw new Error(`[${end}] is an invalid end position.`);
   if (!isValidPosition(start))
@@ -51,7 +51,18 @@ function isValidPosition(position) {
     return false;
   return true;
 }
-const start = [0, 0];
-const end = [7, 7];
 
-console.log(knightMoves(start, end));
+function knightMoves(start, end) {
+  movesArray = getKnightMoves(start, end);
+  console.log(
+    `The shortest route takes ${movesArray.length - 1} moves. Here's the path:`
+  );
+
+  movesArray.forEach((move) => {
+    console.log(`[${move}]`);
+  });
+}
+const start = [3, 3];
+const end = [4, 3];
+
+knightMoves(start, end);
