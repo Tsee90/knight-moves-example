@@ -62,7 +62,7 @@ function knightMoves(start, end) {
     console.log(`[${move}]`);
   });
 }
-const start = [3, 3];
-const end = [4, 3];
+const start = [0, 0];
+const end = [7, 7];
 
 knightMoves(start, end);
