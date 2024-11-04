@@ -3,62 +3,41 @@ function knightMoves(start, end) {
     throw new Error(`[${end}] is an invalid end position.`);
   if (!isValidPosition(start))
     throw new Error(`[${start}] is an invalid start position.`);
-  if (isEqual(start, end)) return 0;
+  if (isEqual(start, end)) return start;
 
-  let depth = 0;
-  let found = false;
+  const possibleMoves = [
+    [2, 1],
+    [2, -1],
+    [-2, 1],
+    [-2, -1],
+    [1, 2],
+    [-1, 2],
+    [1, -2],
+    [-1, -2],
+  ];
+
   const queue = [];
   queue.push([start]);
-  while (queue.length > 0 && !found) {
-    const currentSet = queue.shift();
-    let nextSet = [];
-    currentSet.forEach((position) => {
-      const rightUp = [position[0] + 2, position[1] + 1];
-      const rightDown = [position[0] + 2, position[1] - 1];
-      const leftUp = [position[0] - 2, position[1] + 1];
-      const leftDown = [position[0] - 2, position[1] - 1];
-      const upRight = [position[0] + 1, position[1] + 2];
-      const upLeft = [position[0] - 1, position[1] + 2];
-      const downRight = [position[0] + 1, position[1] - 2];
-      const downLeft = [position[0] - 1, position[1] - 2];
+  const visited = new Set();
+  visited.add(`${start[0]},${start[1]}`);
+  while (queue.length > 0) {
+    const path = queue.shift();
+    const current = path[path.length - 1];
 
-      const newMoveSet = [
-        rightUp,
-        rightDown,
-        leftUp,
-        leftDown,
-        upRight,
-        upLeft,
-        downRight,
-        downLeft,
-      ];
+    for (const move of possibleMoves) {
+      const nextPosition = [current[0] + move[0], current[1] + move[1]];
 
-      const validMoveSet = newMoveSet.filter((position) =>
-        isValidPosition(position)
-      );
-
-      if (checkMoveSet(validMoveSet, end)) {
-        found = true;
-      } else {
-        nextSet = nextSet.concat(validMoveSet);
+      if (isEqual(nextPosition, end)) {
+        return [...path, end];
       }
-    });
-    if (nextSet.length > 0) queue.push(nextSet);
 
-    depth += 1;
-  }
-
-  return depth;
-}
-
-function checkMoveSet(set, end) {
-  let found = false;
-  set.forEach((move) => {
-    if (isEqual(move, end)) {
-      found = true;
+      const posKey = `${nextPosition[0]},${nextPosition[1]}`;
+      if (isValidPosition(nextPosition) && !visited.has(posKey)) {
+        visited.add(posKey);
+        queue.push([...path, nextPosition]);
+      }
     }
-  });
-  return found;
+  }
 }
 
 function isEqual(position, end) {
@@ -71,7 +50,7 @@ function isValidPosition(position) {
     return false;
   return true;
 }
-const start = [0, 0];
+const start = '[0, 0]';
 const end = [7, 7];
 
 console.log(knightMoves(start, end));
